@@ -1,0 +1,11 @@
+#version 130
+
+in vec3 vertexPosition;
+in vec3 vxColor;
+out vec3 vColor;
+void main(){
+  gl_Position.xyz = vertexPosition;
+  gl_Position.w = 1.0;
+  vColor = vxColor;
+  //or gl_Position =  vec4(vec3, 1.0);
+}
