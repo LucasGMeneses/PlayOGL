@@ -1,3 +1,5 @@
+package main;
+
 import java.nio.FloatBuffer;
 
 import javax.swing.JFrame;
@@ -16,7 +18,7 @@ import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 
 //http://www.opengl-tutorial.org/beginners-tutorials/tutorial-2-the-first-triangle/
-public class Hello implements GLEventListener {
+public class Main implements GLEventListener {
 
 	private ShaderProgram shaderProgram;
 	private ShaderCode vertexShader;
@@ -25,7 +27,7 @@ public class Hello implements GLEventListener {
 	private int[] vao = new int[1];
 	private int[] vbo = new int[1];
 
-	@Override
+
 	public void init(GLAutoDrawable canvas) {
 		GL3 gl = canvas.getGL().getGL3();
 		gl.glClearColor(0f, 0f, 0f, 1f);
@@ -48,7 +50,7 @@ public class Hello implements GLEventListener {
 				GL.GL_STATIC_DRAW);
 	}
 
-	@Override
+
 	public void display(GLAutoDrawable canvas) {
 		System.out.println("Display: " + canvas);
 
@@ -58,7 +60,8 @@ public class Hello implements GLEventListener {
 		gl.glUseProgram(shaderProgram.program());
 		// tem que ativar todos os atributos, inicialmente sao desabilitados por padrao
 		gl.glEnableVertexAttribArray(0);
-                gl.glEnableVertexAttribArray(1);
+        gl.glEnableVertexAttribArray(1);
+        
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo[0]);
 		// 0=location do atributo no shader
 		// penultimo zero pode ser 3 * Float.BYTES
@@ -77,7 +80,6 @@ public class Hello implements GLEventListener {
 		gl.glUseProgram(0);
 	}
 
-	@Override
 	public void reshape(GLAutoDrawable canvas, int x, int y, int width, int height) {
 		System.out.println("Reshape: " + canvas);
 
@@ -85,7 +87,6 @@ public class Hello implements GLEventListener {
 		gl3.glViewport(x, y, width, height);
 	}
 
-	@Override
 	public void dispose(GLAutoDrawable canvas) {
 		System.out.println("Dispose: " + canvas);
 
@@ -117,10 +118,10 @@ public class Hello implements GLEventListener {
 		GLProfile profile = GLProfile.get(GLProfile.GL3);
 
 		GLJPanel canvas = new GLJPanel(new GLCapabilities(profile));
-		canvas.addGLEventListener(new Hello());
+		canvas.addGLEventListener(new Main());
 
-		JFrame app = new JFrame("Hello");
-		app.setSize(600, 480);
+		JFrame app = new JFrame("OpenGL Playgound!");
+		app.setSize(640, 480);
 		app.setLocationRelativeTo(null);
 		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		app.getContentPane().add(canvas);
