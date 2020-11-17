@@ -2,5 +2,5 @@
  
 ## Bibliotecas
 * [Jogl](https://jogamp.org/) 
-* [Jama](https://math.nist.gov/javanumerics/jama/)
+* [JOML](https://github.com/JOML-CI/JOML)
 * [leitor de .obj](https://github.com/javagl/Obj)
