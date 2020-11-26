@@ -87,7 +87,7 @@ if __name__ == '__main__':
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
 	
 	glutInitWindowSize(640, 640);
-	glutCreateWindow(b'Hello world!')
+	glutCreateWindow(b'PlayOGL')
 	
 	glutReshapeFunc(reshape)
 	glutDisplayFunc(display)
