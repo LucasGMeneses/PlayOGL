@@ -11,6 +11,7 @@ Mini blender usando PyOpengl
 #### Python 3
 ```
 python3 -m install PyOpenGL PyOpenGL_accelerate numpy pyrr PyWavefront
+```
 
 ## Executar
 
