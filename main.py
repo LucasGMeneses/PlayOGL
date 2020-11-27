@@ -77,9 +77,6 @@ def display():
 def reshape(width, height):
 	glViewport(0, 0, width, height)
 
-def readInput():
-	with open(sys.argv[1], 'r') as myfile:
-		return myfile.read()
 	
 if __name__ == '__main__':
 	glutInit(sys.argv[0])
