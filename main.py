@@ -1,17 +1,16 @@
 import sys
 import numpy as np
-
 from OpenGL.GL import *
 from OpenGL.GL import shaders
 from OpenGL.GLUT import *
 
+from utils.objects import *
+from utils.readers import readShaderFile
 vao = None
 vbo = None
-shaderProgram = None
 
-def readShaderFile(filename):
-	with open('shader/' + filename, 'r') as myfile:
-		return myfile.read()
+shaderProgram = None
+cube = Cube('cn1',[1.0,0.0,1.0])
 
 def init():
 	global shaderProgram
@@ -20,8 +19,8 @@ def init():
 	
 	glClearColor(0, 0, 0, 0)
 	
-	vertex_code = readShaderFile('hello.vp')
-	fragment_code = readShaderFile('hello.fp')
+	vertex_code = readShaderFile('default.vp')
+	fragment_code = readShaderFile('default.fp')
 
 	# compile shaders and program
 	vertexShader = shaders.compileShader(vertex_code, GL_VERTEX_SHADER)
@@ -32,14 +31,16 @@ def init():
 	vao = GLuint(0)
 	glGenVertexArrays(1, vao)
 	glBindVertexArray(vao)
-
+	
 	# Create and bind the Vertex Buffer Object
-	vertices = np.array([[0, 1, 0, 0, 0, 1], [-1, -1, 0, 1, 0, 0], [1, -1, 0, 0, 1, 0]], dtype='f')
+	
+	vertices =  cube.vertices
+	
 	vbo = glGenBuffers(1)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo)
 	glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
-	glVertexAttribPointer(0, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(0))  # first 0 is the location in shader
-	glVertexAttribPointer(1, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(3*sizeof(GLfloat)))  # first 0 is the location in shader
+	glVertexAttribPointer(0, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(3*sizeof(GLfloat)))  # vertices
+	glVertexAttribPointer(1, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(0))  # vertores normais
 
 	glEnableVertexAttribArray(0);  # 0=location do atributo, tem que ativar todos os atributos inicialmente sao desabilitados por padrao
 	glEnableVertexAttribArray(1);  # 1=location do atributo, tem que ativar todos os atributos inicialmente sao desabilitados por padrao
@@ -55,15 +56,16 @@ def display():
 	global vao
 	
 	glEnable(GL_DEPTH_TEST)
-	print(readInput())
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	# load everthing back
 	glUseProgram(shaderProgram)
 	glBindVertexArray(vao)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo)
-	
+	id = glGetUniformLocation(shaderProgram, 'fColor')
+	glUniform3fv(id,1, cube.color)
 	# glDrawArrays( mode , first, count)
-	glDrawArrays(GL_TRIANGLES, 0, 3)
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, cube.nVet)
 
 	#clean things up
 	glBindBuffer(GL_ARRAY_BUFFER, 0)
@@ -83,10 +85,10 @@ if __name__ == '__main__':
 	glutInit(sys.argv[0])
 
 	glutInitContextVersion(3, 0)
-	glutInitContextProfile(GLUT_CORE_PROFILE);
+	glutInitContextProfile(GLUT_CORE_PROFILE)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
 	
-	glutInitWindowSize(640, 640);
+	glutInitWindowSize(640, 640)
 	glutCreateWindow(b'PlayOGL')
 	
 	glutReshapeFunc(reshape)
