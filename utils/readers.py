@@ -15,7 +15,3 @@ def readShaderFile(filename):
 	with open('shader/' + filename, 'r') as myfile:
 		return myfile.read()
 
-# le as entradas fornecidas pelo usuario
-def readInput():
-	with open(sys.argv[1], 'r') as myfile:
-		return myfile.read()

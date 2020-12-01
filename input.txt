@@ -1,3 +1,5 @@
-ola dsds
-asdas
-dsdds
+axis_on
+rotate 60
+axis_off
+
+reflection_on
