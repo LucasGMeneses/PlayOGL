@@ -107,15 +107,14 @@ def init():
 	
 	# Create and bind the Vertex Array Object
 	vao = GLuint(0)
-	vao = glGenVertexArrays(2)
-	glBindVertexArray(vao[1])
+	vao = glGenVertexArrays(1)
+	glBindVertexArray(vao)
 	# Create and bind the Vertex Buffer Object
-	print(vao[0])
 	vertices =  data
 	#print(data)
-	vbo = glGenBuffers(2)
+	vbo = glGenBuffers(1)
 	
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1])
+	glBindBuffer(GL_ARRAY_BUFFER, vbo)
 	glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
 	
 
@@ -141,11 +140,10 @@ def display():
 
 	# load everthing back
 	glUseProgram(shaderProgram[0])
-	glBindVertexArray(vao[0])
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
+	glBindVertexArray(vao)
+	glBindBuffer(GL_ARRAY_BUFFER, vbo)
 	id = glGetUniformLocation(shaderProgram[0], 'fColor')
 	glUniform3fv(id,1, cube.color)
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, cube.nVet)
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, cube.nVet)
 	
 	#clean things up
