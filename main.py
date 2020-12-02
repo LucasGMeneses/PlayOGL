@@ -5,16 +5,17 @@ from OpenGL.GL import shaders
 from OpenGL.GLUT import *
 
 from utils.objects import *
-from utils.readers import readShaderFile
+from utils.readers import *
+from utils.scene import Scene
 vao = None
 vbo = None
 
-shaderProgram = None
-cube = Cube('cn1',[1.0,0.0,1.0])
+shaderProgram = []
+data = readObj('cube')
+cube = Cube('oi')
 def execComands():
 
 	file = open(sys.argv[1])
-	
 	for line in file:
 		if line != '\n':
 			cmd = line.replace('\n','').split(' ')
@@ -76,12 +77,12 @@ def execComands():
 			
 			# opcoes extras
 			elif cmd[0] == 'save':
-				print(cmd[0])
+				print('NOT IMPLEMENTED')
 			elif cmd[0] == 'quit':
-				print(cmd[0])
+				print('NOT IMPLEMENTED')
 			else:
 				print('ERROR')
-			
+	file.close()
 
 def init():
 	global shaderProgram
@@ -90,60 +91,69 @@ def init():
 	
 	glClearColor(0, 0, 0, 0)
 	
-	vertex_code = readShaderFile('default.vp')
-	fragment_code = readShaderFile('default.fp')
+	
+	shader = ['default']
+	# compila todos os shaders disponiveis na lista a cima
+	n = len(shader)
+	for i in range(n):
+		vertex_code = readShaderFile(shader[i] +'.vp')
+		fragment_code = readShaderFile(shader[i] + '.fp')
 
-	# compile shaders and program
-	vertexShader = shaders.compileShader(vertex_code, GL_VERTEX_SHADER)
-	fragmentShader = shaders.compileShader(fragment_code, GL_FRAGMENT_SHADER)
-	shaderProgram = shaders.compileProgram(vertexShader, fragmentShader)
-	execComands()
+		# compile shaders and program
+		vertexShader = shaders.compileShader(vertex_code, GL_VERTEX_SHADER)
+		fragmentShader = shaders.compileShader(fragment_code, GL_FRAGMENT_SHADER)
+		aux = shaders.compileProgram(vertexShader, fragmentShader)
+		shaderProgram.append(aux)
+	
 	# Create and bind the Vertex Array Object
 	vao = GLuint(0)
-	glGenVertexArrays(1, vao)
-	glBindVertexArray(vao)
-
+	vao = glGenVertexArrays(2)
+	glBindVertexArray(vao[1])
 	# Create and bind the Vertex Buffer Object
+	print(vao[0])
+	vertices =  data
+	#print(data)
+	vbo = glGenBuffers(2)
 	
-	vertices =  cube.vertices
-	
-	vbo = glGenBuffers(1)
-	glBindBuffer(GL_ARRAY_BUFFER, vbo)
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1])
 	glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
+	
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(3*sizeof(GLfloat)))  # vertices
 	glVertexAttribPointer(1, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(0))  # vertores normais
 
-	glEnableVertexAttribArray(0);  # 0=location do atributo, tem que ativar todos os atributos inicialmente sao desabilitados por padrao
-	glEnableVertexAttribArray(1);  # 1=location do atributo, tem que ativar todos os atributos inicialmente sao desabilitados por padrao
+	glEnableVertexAttribArray(0) 
+	glEnableVertexAttribArray(1)
 	
 	# Note that this is allowed, the call to glVertexAttribPointer registered VBO
 	# as the currently bound vertex buffer object so afterwards we can safely unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0)
-	# Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs)
+	#Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs)
 	glBindVertexArray(0)
 
 def display():
 	global shaderProgram
 	global vao
+	scene = Scene()
 	glEnable(GL_DEPTH_TEST)
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-	# load everthing back
-	glUseProgram(shaderProgram)
-	glBindVertexArray(vao)
-	glBindBuffer(GL_ARRAY_BUFFER, vbo)
-	id = glGetUniformLocation(shaderProgram, 'fColor')
-	glUniform3fv(id,1, cube.color)
-	# glDrawArrays( mode , first, count)
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, cube.nVet)
+	execComands()
 
+	# load everthing back
+	glUseProgram(shaderProgram[0])
+	glBindVertexArray(vao[0])
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
+	id = glGetUniformLocation(shaderProgram[0], 'fColor')
+	glUniform3fv(id,1, cube.color)
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, cube.nVet)
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, cube.nVet)
+	
 	#clean things up
 	glBindBuffer(GL_ARRAY_BUFFER, 0)
 	glBindVertexArray(0)
 	glUseProgram(0)
 	
 	glutSwapBuffers()  # necessario para windows!
-
 def reshape(width, height):
 	glViewport(0, 0, width, height)
 

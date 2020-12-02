@@ -1,0 +1,11 @@
+add_shape cone co1
+color co1 1 0.5 0.7
+scale co1 0.7 0.7 0.7
+add_light l1 0 1 0
+lights_on
+reflection_on diffuse 0.7
+shading phong
+cam 0 1.2 0
+lookat 0 0 0.1
+axis_on
+save cone_phong_top

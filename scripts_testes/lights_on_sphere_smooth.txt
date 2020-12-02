@@ -1,0 +1,10 @@
+lights_on
+add_light l1 0.5 0 0.5
+add_shape sphere c1
+color c1 0 1 0
+scale c1 0.5 0.5 0.5
+shading smooth
+lookat 0 0 0
+axis_on
+cam 0 0 1
+save lights_on_sphere_smooth

@@ -1,5 +1,6 @@
 import pywavefront as pwf
 import sys
+import numpy as np
 
 # le os .obj
 # gera um array com os pontos e as normais
@@ -8,7 +9,7 @@ def readObj(name):
     scene.parse()
 
     for name, material in scene.materials.items():
-            return material.vertices
+            return np.array(material.vertices, dtype='f')
 
 # faz a leitura dos shaders
 def readShaderFile(filename):

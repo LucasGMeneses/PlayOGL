@@ -1,0 +1,11 @@
+axis_on
+add_shape sphere s1
+color s1 1 0 0
+add_shape cube c1
+color c1 0 1 0
+add_shape torus t1
+color t1 0 0 1
+add_shape cone co1
+color co1 1 0 1
+wire_on
+save multiple_wire

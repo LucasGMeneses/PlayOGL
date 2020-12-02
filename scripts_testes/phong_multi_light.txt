@@ -1,0 +1,20 @@
+axis_on
+add_shape cube c1
+color c1 0 0 1
+scale c1 0.4 0.4 0.4
+add_light l1 0.5 0.5 0.5
+add_light l2 0.5 0.5 -0.5
+add_light l3 0.5 -0.5 0.5
+add_light l4 0.5 -0.5 -0.5
+add_light l5 -0.5 0.5 0.5
+add_light l6 -0.5 0.5 -0.5
+add_light l7 -0.5 -0.5 0.5
+add_light l8 -0.5 -0.5 -0.5
+reflection_on diffuse 0.5
+reflection_on specular 0.8
+reflection_on ambient 0.2
+cam 0.5 0.5 0.5
+lookat 0 0 0
+lights_on
+shading phong
+save phong_multi_light

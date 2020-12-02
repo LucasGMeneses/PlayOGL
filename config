@@ -1,0 +1,14 @@
+obj:
+    pos 0 0 0
+    cor branca
+cam:
+    pos     0  0  0
+    lookat  0  0 -1
+    vetUp   0  1  0
+
+projection: 
+    ortho (-2f, 2f, -2f, 2f, -2f, 2f)
+
+reflexão especular n = 32
+
+luzes brancas max 12

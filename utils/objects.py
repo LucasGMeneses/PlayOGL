@@ -16,6 +16,7 @@ class Object3d:
     def printInfo(self):
         print('Name:', self.name)
         print('Vertices:\n', self.vertices)
+        print('Nº vert:\n', self.nVet)
         print('color:', self.color)
         print('Model:\n', self.model)
 
@@ -44,3 +45,14 @@ class Ico(Object3d):
         vertices = array(rd.readObj('ico'), dtype='f')
         super().__init__(name, vertices, color)
 
+'''
+    aux.append(Cube(txt)) 
+    aux.append(Ico(txt))
+    aux.append(Torus(txt))
+    aux.append(Cone(txt))
+
+42
+15363
+3462
+276
+'''

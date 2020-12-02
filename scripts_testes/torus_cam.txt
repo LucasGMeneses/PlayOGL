@@ -1,0 +1,11 @@
+add_shape torus t1
+scale t1 0.4 0.4 0.4
+axis_on
+add_light l1 0.0 0.0 0.0
+reflection_on diffuse 0.5
+color t1 0 1 0
+cam 0 1 0
+lookat 0 0 0.1
+shading smooth
+rotate t1 45 1 1 1
+save torus_cam

@@ -1,0 +1,25 @@
+axis_on
+add_light l1 0 0 0.5
+reflection_on ambient 0.3
+reflection_on diffuse 0.7
+reflection_on specular 0.5
+add_shape sphere s1
+color s1 1 0 0
+scale s1 0.3 0.3 0.3
+translate s1 -1 1 0
+add_shape cube c1
+color c1 0 1 0
+scale c1 0.3 0.3 0.3
+translate c1 1 1 0
+add_shape torus t1
+color t1 0 0 1
+scale t1 0.3 0.3 0.3
+translate t1 1 -1 0
+add_shape cone co1
+color co1 1 0 1
+scale co1 0.3 0.3 0.3
+translate co1 -1 -1 0
+cam 0.5 0.5 0.5
+shading phong
+lights_on
+save multiple2
