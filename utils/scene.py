@@ -5,7 +5,7 @@ class Scene:
         self.Objs = []
         self.view = mat4.create_identity()
         self.projection = mat4.create_identity()
-        self.light = []
+        self.lights = []
     def add(self, object, lis):
         lis.append(object)
     

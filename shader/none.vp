@@ -1,0 +1,11 @@
+#version 130
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+in vec3 vPos;
+in vec3 vNormal;
+
+void main(){
+  gl_Position = model * view * projection * vec4(vPos, 1);
+}

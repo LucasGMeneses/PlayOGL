@@ -7,11 +7,12 @@ from OpenGL.GLUT import *
 from utils.objects import *
 from utils.readers import *
 from utils.scene import Scene
-vao = None
-vbo = None
+
+vao = []
+vbo = []
 
 shaderProgram = []
-data = readObj('cube')
+#data = readObj('cube')
 cube = Cube('oi')
 def execComands():
 
@@ -105,24 +106,23 @@ def init():
 		aux = shaders.compileProgram(vertexShader, fragmentShader)
 		shaderProgram.append(aux)
 	
+	objetos = ['cube', 'torus', 'cone', 'ico']
 	# Create and bind the Vertex Array Object
-	vao = GLuint(0)
-	vao = glGenVertexArrays(1)
-	glBindVertexArray(vao)
-	# Create and bind the Vertex Buffer Object
-	vertices =  data
-	#print(data)
-	vbo = glGenBuffers(1)
-	
-	glBindBuffer(GL_ARRAY_BUFFER, vbo)
-	glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
-	
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(3*sizeof(GLfloat)))  # vertices
-	glVertexAttribPointer(1, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(0))  # vertores normais
-
-	glEnableVertexAttribArray(0) 
-	glEnableVertexAttribArray(1)
+	for i in range(len(objetos)):
+		
+		vao.append(GLuint(0))
+		glGenVertexArrays(1,vao[i])
+		glBindVertexArray(vao[i])
+		# Create and bind the Vertex Buffer Object
+		vertices =  readObj(objetos[i])
+		vbo.append(glGenBuffers(1))
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[i])
+		glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
+		
+		glVertexAttribPointer(0, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(3*sizeof(GLfloat)))  # vertices
+		glVertexAttribPointer(1, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(0))  # vertores normais
+		glEnableVertexAttribArray(0) 
+		glEnableVertexAttribArray(1)
 	
 	# Note that this is allowed, the call to glVertexAttribPointer registered VBO
 	# as the currently bound vertex buffer object so afterwards we can safely unbind
@@ -140,11 +140,11 @@ def display():
 
 	# load everthing back
 	glUseProgram(shaderProgram[0])
-	glBindVertexArray(vao)
-	glBindBuffer(GL_ARRAY_BUFFER, vbo)
+	glBindVertexArray(vao[3])
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[3])
 	id = glGetUniformLocation(shaderProgram[0], 'fColor')
 	glUniform3fv(id,1, cube.color)
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, cube.nVet)
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 100000)
 	
 	#clean things up
 	glBindBuffer(GL_ARRAY_BUFFER, 0)
