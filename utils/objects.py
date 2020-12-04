@@ -4,18 +4,15 @@ from pyrr import matrix44 as mat4
 
 # classe um objeto generico
 class Object3d:
-    def __init__(self, name, vertices, color):
+    def __init__(self, name, color, nVet):
         self.name = name        #  nome
-        self.vertices = vertices # vertices 
         self.color = color # cor
         self.model = mat4.create_identity() # matrix model
-        self.nVet = len(vertices) // 6 # numero de vertices
-        self.vao = None
-    
+        self.nVet = nVet
+
     # imprime as informações do objeto
     def printInfo(self):
         print('Name:', self.name)
-        print('Vertices:\n', self.vertices)
         print('Nº vert:\n', self.nVet)
         print('color:', self.color)
         print('Model:\n', self.model)
@@ -23,27 +20,33 @@ class Object3d:
 
 # cubo
 class Cube(Object3d):
-    def __init__(self, name, color=[0.0,1.0,0.0]):
-        vertices = array(rd.readObj('cube'), dtype='f')
-        super().__init__(name, vertices, color)
+    def __init__(self, name, vao, vbo, color=[1.0,1.0,1.0]):
+        super().__init__(name, color, 42)
+        self.vao = vao
+        self.vbo = vbo
 
 # torus
 class Torus(Object3d):
-    def __init__(self, name, color=[0.0,1.0,0.0]):
-        vertices = array(rd.readObj('torus'), dtype='f')
-        super().__init__(name, vertices, color)
+    def __init__(self, name, vao, vbo, color=[1.0,1.0,1.0]):
+        super().__init__(name, color, 3462)
+        self.vao = vao
+        self.vbo = vbo
+
 
 # cone
 class Cone(Object3d):
-    def __init__(self, name, color=[0.0,1.0,0.0]):
-        vertices = array(rd.readObj('cone'), dtype='f')
-        super().__init__(name, vertices, color)
+    def __init__(self, name, vao, vbo, color=[1.0,1.0,1.0]):
+        super().__init__(name, color, 276)
+        self.vao = vao
+        self.vbo = vbo
+        
 
 # ico
 class Ico(Object3d):
-    def __init__(self, name, color=[0.0,1.0,0.0]):
-        vertices = array(rd.readObj('ico'), dtype='f')
-        super().__init__(name, vertices, color)
+    def __init__(self, name, vao, vbo, color=[1.0,1.0,1.0]):
+        super().__init__(name, color, 15363)
+        self.vao = vao
+        self.vbo = vbo
 
 '''
     aux.append(Cube(txt)) 

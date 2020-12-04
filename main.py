@@ -13,8 +13,16 @@ vbo = []
 
 shaderProgram = []
 #data = readObj('cube')
-cube = Cube('oi')
+cube = None
+axis = False
+def axisDraw():
+	glUseProgram(shaderProgram[1])
+	glBindVertexArray(vao[4])
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[4])
+	glDrawArrays(GL_LINES, 0, 6)
+
 def execComands():
+	global axis
 
 	file = open(sys.argv[1])
 	for line in file:
@@ -22,9 +30,9 @@ def execComands():
 			cmd = line.replace('\n','').split(' ')
 			# visualização dos eixos xyz
 			if cmd[0]  == 'axis_on':
-				print('eixos ligados')
+				axis = True
 			elif cmd[0] == 'axis_off':
-				print(cmd[0])
+				axis = False
 
 			# visao wireframe
 			elif cmd[0] == 'wire_on':
@@ -34,7 +42,8 @@ def execComands():
 
 			# manipula objetos
 			elif cmd[0] == 'add_shape':
-				print(cmd[0])
+				if cmd[1] == 'cube':
+					pass
 			elif cmd[0] == 'remove_shape':
 				print(cmd[0])
 			
@@ -93,7 +102,7 @@ def init():
 	glClearColor(0, 0, 0, 0)
 	
 	
-	shader = ['default']
+	shader = ['default','axis']
 	# compila todos os shaders disponiveis na lista a cima
 	n = len(shader)
 	for i in range(n):
@@ -124,27 +133,51 @@ def init():
 		glEnableVertexAttribArray(0) 
 		glEnableVertexAttribArray(1)
 	
+	# axis vao e vbo
+	vao.append(GLuint(0))
+	glGenVertexArrays(1,vao[4])
+	glBindVertexArray(vao[4])
+	# Create and bind the Vertex Buffer Object
+	vertices =  np.array([[-1, 0, 0, 1, 0, 0], [1, 0, 0, 1, 0, 0],
+						[0, -1, 0, 0, 1, 0],[0, 1, 0, 0, 1, 0],
+						[0, 0, -1, 0, 0, 1],[0, 0, 1, 0, 0, 1]], dtype='f')
+	vbo.append(glGenBuffers(1))
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[4])
+	glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
+		
+	glVertexAttribPointer(1, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(3*sizeof(GLfloat)))  # vertices
+	glVertexAttribPointer(0, 3, GL_FLOAT, False, 6 * sizeof(GLfloat), ctypes.c_void_p(0))  # vertores normais
+	glEnableVertexAttribArray(0) 
+	glEnableVertexAttribArray(1)
 	# Note that this is allowed, the call to glVertexAttribPointer registered VBO
 	# as the currently bound vertex buffer object so afterwards we can safely unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0)
 	#Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs)
 	glBindVertexArray(0)
-
+	
 def display():
 	global shaderProgram
 	global vao
+	global axis
+
+	cube = Cube('oi', vao[0], vbo[0])
 	scene = Scene()
 	glEnable(GL_DEPTH_TEST)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+	
 	execComands()
-
 	# load everthing back
 	glUseProgram(shaderProgram[0])
-	glBindVertexArray(vao[3])
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[3])
+	glBindVertexArray(cube.vao)
+	glBindBuffer(GL_ARRAY_BUFFER, cube.vbo)
+	
 	id = glGetUniformLocation(shaderProgram[0], 'fColor')
 	glUniform3fv(id,1, cube.color)
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 100000)
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, cube.nVet)
+	
+	if axis == True:
+		axisDraw()
+		axis = False
 	
 	#clean things up
 	glBindBuffer(GL_ARRAY_BUFFER, 0)

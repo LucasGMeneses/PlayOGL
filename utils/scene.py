@@ -8,7 +8,7 @@ class Scene:
         self.lights = []
     def add(self, object, lis):
         lis.append(object)
-    
+        
     #procura pelo nome do objeto
     def search(self, name, lis):
         n = len(lis)
