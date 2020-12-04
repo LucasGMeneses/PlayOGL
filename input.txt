@@ -1,1 +1,4 @@
-axis_on
+wire_on
+add_shape cone g
+add_shape torus g2
+remove_shape g

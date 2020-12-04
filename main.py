@@ -8,21 +8,23 @@ from utils.objects import *
 from utils.readers import *
 from utils.scene import Scene
 
+window = None
 vao = []
 vbo = []
 
 shaderProgram = []
-#data = readObj('cube')
-cube = None
 axis = False
+wire = False
+
 def axisDraw():
 	glUseProgram(shaderProgram[1])
 	glBindVertexArray(vao[4])
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[4])
 	glDrawArrays(GL_LINES, 0, 6)
 
-def execComands():
+def execComands(scene):
 	global axis
+	global wire
 
 	file = open(sys.argv[1])
 	for line in file:
@@ -36,16 +38,27 @@ def execComands():
 
 			# visao wireframe
 			elif cmd[0] == 'wire_on':
-				print(cmd[0])
+				wire = True
 			elif cmd[0] == 'wire_off':
-				print(cmd[0])
+				wire = False
 
 			# manipula objetos
 			elif cmd[0] == 'add_shape':
+				obj = None
 				if cmd[1] == 'cube':
-					pass
+					obj = Cube(cmd[2], vao[0], vbo[0])
+				if cmd[1] == 'torus':
+					obj = Torus(cmd[2], vao[1], vbo[1])
+				if cmd[1] == 'cone':
+					obj = Cone(cmd[2], vao[2], vbo[2])
+				if cmd[1] == 'sphere':
+					obj = Ico(cmd[2], vao[3], vbo[3])
+				
+				if obj != None:
+					scene.objs.append(obj)
+			
 			elif cmd[0] == 'remove_shape':
-				print(cmd[0])
+				scene.remove(cmd[1], scene.objs)
 			
 			# manipula pts de luz
 			elif cmd[0] == 'add_light':
@@ -67,7 +80,9 @@ def execComands():
 			elif cmd[0] == 'shading':
 				print(cmd[0])
 			elif cmd[0] == 'color':
-				print(cmd[0])
+				index = scene.search(cmd[1])
+				#scene.objs[index].color =[] 
+
 
 			# transformacoes
 			elif cmd[0] == 'translate':
@@ -89,7 +104,8 @@ def execComands():
 			elif cmd[0] == 'save':
 				print('NOT IMPLEMENTED')
 			elif cmd[0] == 'quit':
-				print('NOT IMPLEMENTED')
+				glutLeaveMainLoop(window)
+				glutDestroyWindow(window)
 			else:
 				print('ERROR')
 	file.close()
@@ -159,21 +175,27 @@ def display():
 	global shaderProgram
 	global vao
 	global axis
+	global wire
 
-	cube = Cube('oi', vao[0], vbo[0])
 	scene = Scene()
+	scene.shader = shaderProgram[0]
 	glEnable(GL_DEPTH_TEST)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	
-	execComands()
+	execComands(scene)
 	# load everthing back
-	glUseProgram(shaderProgram[0])
-	glBindVertexArray(cube.vao)
-	glBindBuffer(GL_ARRAY_BUFFER, cube.vbo)
-	
-	id = glGetUniformLocation(shaderProgram[0], 'fColor')
-	glUniform3fv(id,1, cube.color)
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, cube.nVet)
+	for obj in scene.objs:
+		glUseProgram(scene.shader)
+		glBindVertexArray(obj.vao)
+		glBindBuffer(GL_ARRAY_BUFFER, obj.vbo)
+		#obj.printInfo()
+		id = glGetUniformLocation(scene.shader, 'fColor')
+		glUniform3fv(id, 1, obj.color)
+		
+		if wire == True:
+			glDrawArrays(GL_LINE_LOOP, 0, obj.nVet)
+		else:
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, obj.nVet)
 	
 	if axis == True:
 		axisDraw()
@@ -197,7 +219,7 @@ if __name__ == '__main__':
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
 	
 	glutInitWindowSize(640, 640)
-	glutCreateWindow(b'PlayOGL')
+	window =glutCreateWindow(b'PlayOGL')
 	
 	glutReshapeFunc(reshape)
 	glutDisplayFunc(display)

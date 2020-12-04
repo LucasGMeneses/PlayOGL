@@ -4,11 +4,13 @@ from pyrr import matrix44 as mat4
 
 # classe um objeto generico
 class Object3d:
-    def __init__(self, name, color, nVet):
+    def __init__(self, name, color, nVet, vao, vbo):
         self.name = name        #  nome
         self.color = color # cor
         self.model = mat4.create_identity() # matrix model
         self.nVet = nVet
+        self.vao = vao
+        self.vbo = vbo
 
     # imprime as informações do objeto
     def printInfo(self):
@@ -16,37 +18,34 @@ class Object3d:
         print('Nº vert:\n', self.nVet)
         print('color:', self.color)
         print('Model:\n', self.model)
+        print('VAO:\n', self.vao)
+        print('VBO:\n', self.vbo)
+        print('%%%%%%%%%%%%%%%%%%%%%%%%')
 
 
 # cubo
 class Cube(Object3d):
     def __init__(self, name, vao, vbo, color=[1.0,1.0,1.0]):
-        super().__init__(name, color, 42)
-        self.vao = vao
-        self.vbo = vbo
+        super().__init__(name, color, 42, vao, vbo)
+        
 
 # torus
 class Torus(Object3d):
     def __init__(self, name, vao, vbo, color=[1.0,1.0,1.0]):
-        super().__init__(name, color, 3462)
-        self.vao = vao
-        self.vbo = vbo
+        super().__init__(name, color, 3462, vao, vbo)
+
 
 
 # cone
 class Cone(Object3d):
     def __init__(self, name, vao, vbo, color=[1.0,1.0,1.0]):
-        super().__init__(name, color, 276)
-        self.vao = vao
-        self.vbo = vbo
+        super().__init__(name, color, 276, vao, vbo)
         
 
 # ico
 class Ico(Object3d):
     def __init__(self, name, vao, vbo, color=[1.0,1.0,1.0]):
-        super().__init__(name, color, 15363)
-        self.vao = vao
-        self.vbo = vbo
+        super().__init__(name, color, 15363, vao, vbo)
 
 '''
     aux.append(Cube(txt)) 
