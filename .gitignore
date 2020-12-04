@@ -3,3 +3,4 @@ playOGL/.classpath
 playOGL/.project
 utils/__pycache__/objects.cpython-38.pyc
 utils/__pycache__/readers.cpython-38.pyc
+utils/__pycache__/*
