@@ -18,17 +18,14 @@ vbo = []
 shaderProgram = []
 axis = False
 wire = False
-def saveImage():
-	pass
-def axisDraw():
-	glUseProgram(shaderProgram[1])
-	glBindVertexArray(vao[4])
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[4])
-	glDrawArrays(GL_LINES, 0, 6)
+lights = False
 
+def axisDraw():
+	pass
 def execComands(scene):
 	global axis
 	global wire
+	global lights
 
 	file = open(sys.argv[1])
 	for line in file:
@@ -66,13 +63,17 @@ def execComands(scene):
 			
 			# manipula pts de luz
 			elif cmd[0] == 'add_light':
-				print(cmd[0])
+				pos = [float(cmd[2]),float(cmd[3]),float(cmd[4])]
+				light = Light(cmd[1], pos)
+				scene.lights.append(light)
+
 			elif cmd[0] == 'remove_light':
-				print(cmd[0])
+				scene.remove(cmd[1], scene.lights)
+			
 			elif cmd[0] == 'light_on':
-				print(cmd[0])
+				lights = True
 			elif cmd[0] == 'light_off':
-				print(cmd[0])
+				lights = False
 			
 			# reflexao
 			elif cmd[0] == 'reflection_on':
@@ -102,6 +103,7 @@ def execComands(scene):
 				index = scene.search(cmd[1],scene.objs)
 				scale = [float(cmd[2]),float(cmd[3]),float(cmd[4])]
 				scene.objs[index].scale(scale)
+			
 			elif cmd[0] == 'shear':
 				print(cmd[0])
 			
@@ -118,7 +120,7 @@ def execComands(scene):
 				glPixelStorei(GL_PACK_ALIGNMENT,1)
 				data = glReadPixels(0, 0, 640, 640, GL_RGBA, GL_UNSIGNED_BYTE)
 				image = Image.frombytes("RGBA", (640,640), data)
-				image.save(cmd[1],'png')
+				image.save(cmd[1]+'.png','png')
 
 			elif cmd[0] == 'quit':
 				glutLeaveMainLoop(window)
@@ -135,7 +137,7 @@ def init():
 	glClearColor(0, 0, 0, 0)
 	
 	
-	shader = ['none','axis']
+	shader = ['none','axis', 'lights']
 	# compila todos os shaders disponiveis na lista a cima
 	n = len(shader)
 	for i in range(n):
@@ -166,14 +168,17 @@ def init():
 		glEnableVertexAttribArray(0) 
 		glEnableVertexAttribArray(1)
 	
+	print(readObj(objetos[0]))
+	
 	# axis vao e vbo
 	vao.append(GLuint(0))
 	glGenVertexArrays(1,vao[4])
 	glBindVertexArray(vao[4])
 	# Create and bind the Vertex Buffer Object
-	vertices =  np.array([[-1, 0, 0, 1, 0, 0], [1, 0, 0, 1, 0, 0],
-						[0, -1, 0, 0, 1, 0],[0, 1, 0, 0, 1, 0],
-						[0, 0, -1, 0, 0, 1],[0, 0, 1, 0, 0, 1]], dtype='f')
+	vertices =  np.array([[-3, 0, 0, 1, 0, 0], [3, 0, 0, 1, 0, 0], # x
+						[0, -3, 0, 0, 1, 0],[0, 3, 0, 0, 1, 0],	   # Y
+						[0, 0, -3, 0, 0, 1],[0, 0, 3, 0, 0, 1]],   # Z
+						dtype='f')
 	vbo.append(glGenBuffers(1))
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[4])
 	glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
@@ -221,11 +226,36 @@ def display():
 		
 		if wire == True:
 			glDrawArrays(GL_LINE_LOOP, 0, obj.nVet)
+			wire == False
 		else:
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, obj.nVet)
+	if lights == True:
+		for light in scene.lights:
+			glUseProgram(shaderProgram[2])
+
+			id = glGetUniformLocation(shaderProgram[2], 'vPos')
+			glUniform3fv(id, 1, light.position)
+
+			id = glGetUniformLocation(scene.shader, 'view')
+			glUniformMatrix4fv(id, 1, GL_FALSE, scene.view)
+			
+			id = glGetUniformLocation(scene.shader, 'projection')
+			glUniformMatrix4fv(id, 1, GL_FALSE, scene.projection)
+			glPointSize(10)
+			glDrawArrays(GL_POINTS, 0, 1)
 	
 	if axis == True:
-		axisDraw()
+		glUseProgram(shaderProgram[1])
+		glBindVertexArray(vao[4])
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[4])
+		
+		id = glGetUniformLocation(shaderProgram[1], 'view')
+		glUniformMatrix4fv(id, 1, GL_FALSE, scene.view)
+		id = glGetUniformLocation(shaderProgram[1], 'projection')
+		glUniformMatrix4fv(id, 1, GL_FALSE, scene.projection)
+
+		glDrawArrays(GL_LINES, 0, 6)
+
 		axis = False
 	
 	#clean things up
@@ -235,6 +265,7 @@ def display():
 	
 	glutSwapBuffers()  # necessario para windows!
 	glReadBuffer(GL_FRONT)
+
 def reshape(width, height):
 	glViewport(0, 0, width, height)
 

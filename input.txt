@@ -1,11 +1,13 @@
 axis_on
 wire_on
-add_shape cone g
+add_shape cube g
 add_shape torus g2
+
 
 color g2 1.0 0 0.0
 color g 0.0 1 0.0
 
-scale g 0.5 0.5 0.5
-rotate g 45 0.0 0.0 1.0
-translate g 0.5 0.0 0.0
+scale g2 0.5 0.5 0.5
+translate g2 0.0 0.0 0.0
+
+cam 0.3 0.4 0.0

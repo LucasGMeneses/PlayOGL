@@ -1,9 +1,10 @@
 #version 130
 
+uniform vec3 vPos;
 uniform mat4 view;
 uniform mat4 projection;
 
-in vec3 vPos;
+
 
 void main(){
   gl_Position = view * projection * vec4(vPos, 1);

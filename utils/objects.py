@@ -58,6 +58,10 @@ class Ico(Object3d):
     def __init__(self, name, vao, vbo, color=[1.0,1.0,1.0]):
         super().__init__(name, color, 15363, vao, vbo)
 
+class Light:
+    def __init__(self, name, position):
+        self.name = name
+        self.position = position
 '''
     aux.append(Cube(txt)) 
     aux.append(Ico(txt))
