@@ -1,8 +1,11 @@
 import sys
 import numpy as np
+import math
+
 from OpenGL.GL import *
 from OpenGL.GL import shaders
 from OpenGL.GLUT import *
+from PIL import Image
 
 from utils.objects import *
 from utils.readers import *
@@ -15,7 +18,8 @@ vbo = []
 shaderProgram = []
 axis = False
 wire = False
-
+def saveImage():
+	pass
 def axisDraw():
 	glUseProgram(shaderProgram[1])
 	glBindVertexArray(vao[4])
@@ -80,29 +84,42 @@ def execComands(scene):
 			elif cmd[0] == 'shading':
 				print(cmd[0])
 			elif cmd[0] == 'color':
-				index = scene.search(cmd[1])
-				#scene.objs[index].color =[] 
-
+				index = scene.search(cmd[1],scene.objs)
+				newColor = [float(cmd[2]),float(cmd[3]),float(cmd[4])]
+				scene.objs[index].color = newColor
 
 			# transformacoes
 			elif cmd[0] == 'translate':
-				print(cmd[0])
+				index = scene.search(cmd[1],scene.objs)
+				pos = [float(cmd[2]),float(cmd[3]),float(cmd[4])]
+				scene.objs[index].translate(pos)
 			elif cmd[0] == 'rotate':
-				print(cmd[0])
+				index = scene.search(cmd[1],scene.objs)
+				ang = math.radians(float(cmd[2]))
+				vect = [float(cmd[3]),float(cmd[4]),float(cmd[5])]
+				scene.objs[index].rotate(ang, vect)
 			elif cmd[0] == 'scale':
-				print(cmd[0])
+				index = scene.search(cmd[1],scene.objs)
+				scale = [float(cmd[2]),float(cmd[3]),float(cmd[4])]
+				scene.objs[index].scale(scale)
 			elif cmd[0] == 'shear':
 				print(cmd[0])
 			
 			# camera configs
 			elif cmd[0] == 'lookat':
-				print(cmd[0])
+				look = [float(cmd[1]),float(cmd[2]),float(cmd[3])]
+				scene.camLookAt = look
 			elif cmd[0] == 'cam':
-				print(cmd[0])
+				pos = [float(cmd[1]),float(cmd[2]),float(cmd[3])]
+				scene.camPos = pos
 			
 			# opcoes extras
 			elif cmd[0] == 'save':
-				print('NOT IMPLEMENTED')
+				glPixelStorei(GL_PACK_ALIGNMENT,1)
+				data = glReadPixels(0, 0, 640, 640, GL_RGBA, GL_UNSIGNED_BYTE)
+				image = Image.frombytes("RGBA", (640,640), data)
+				image.save(cmd[1],'png')
+
 			elif cmd[0] == 'quit':
 				glutLeaveMainLoop(window)
 				glutDestroyWindow(window)
@@ -118,7 +135,7 @@ def init():
 	glClearColor(0, 0, 0, 0)
 	
 	
-	shader = ['default','axis']
+	shader = ['none','axis']
 	# compila todos os shaders disponiveis na lista a cima
 	n = len(shader)
 	for i in range(n):
@@ -183,6 +200,7 @@ def display():
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	
 	execComands(scene)
+	scene.createView()
 	# load everthing back
 	for obj in scene.objs:
 		glUseProgram(scene.shader)
@@ -191,6 +209,15 @@ def display():
 		#obj.printInfo()
 		id = glGetUniformLocation(scene.shader, 'fColor')
 		glUniform3fv(id, 1, obj.color)
+		
+		id = glGetUniformLocation(scene.shader, 'model')
+		glUniformMatrix4fv(id, 1, GL_FALSE, obj.model)
+
+		id = glGetUniformLocation(scene.shader, 'view')
+		glUniformMatrix4fv(id, 1, GL_FALSE, scene.view)
+		
+		id = glGetUniformLocation(scene.shader, 'projection')
+		glUniformMatrix4fv(id, 1, GL_FALSE, scene.projection)
 		
 		if wire == True:
 			glDrawArrays(GL_LINE_LOOP, 0, obj.nVet)
@@ -207,6 +234,7 @@ def display():
 	glUseProgram(0)
 	
 	glutSwapBuffers()  # necessario para windows!
+	glReadBuffer(GL_FRONT)
 def reshape(width, height):
 	glViewport(0, 0, width, height)
 

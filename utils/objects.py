@@ -12,6 +12,17 @@ class Object3d:
         self.vao = vao
         self.vbo = vbo
 
+    def translate(self, position):
+        translate = mat4.create_from_translation(position,dtype='f')
+        self.model = mat4.multiply(self.model, translate)
+    def scale(self, scale):
+        scale = mat4.create_from_scale(scale,dtype='f')
+        self.model = mat4.multiply(self.model, scale)
+
+    def rotate(self, ang, vect):
+        rotate = mat4.create_from_axis_rotation(vect, ang)
+        self.model = mat4.multiply(self.model, rotate)
+    
     # imprime as informações do objeto
     def printInfo(self):
         print('Name:', self.name)
