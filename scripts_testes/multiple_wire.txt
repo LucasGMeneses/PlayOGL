@@ -9,4 +9,3 @@ add_shape cone co1
 color co1 1 0 1
 wire_on
 save multiple_wire
-

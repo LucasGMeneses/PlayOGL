@@ -70,20 +70,20 @@ def execComands(scene):
 			elif cmd[0] == 'remove_light':
 				scene.remove(cmd[1], scene.lights)
 			
-			elif cmd[0] == 'light_on':
+			elif cmd[0] == 'lights_on':
 				lights = True
-			elif cmd[0] == 'light_off':
+			elif cmd[0] == 'lights_off':
 				lights = False
 			
 			# reflexao
 			elif cmd[0] == 'reflection_on':
-				print(cmd[0])
+				print('NOT IMPLEMENTED',cmd[0])
 			elif cmd[0] == 'reflection_off':
-				print(cmd[0])
+				print('NOT IMPLEMENTED',cmd[0])
 			
 			# cores
 			elif cmd[0] == 'shading':
-				print(cmd[0])
+				print('NOT IMPLEMENTED',cmd[0])
 			elif cmd[0] == 'color':
 				index = scene.search(cmd[1],scene.objs)
 				newColor = [float(cmd[2]),float(cmd[3]),float(cmd[4])]
@@ -105,7 +105,7 @@ def execComands(scene):
 				scene.objs[index].scale(scale)
 			
 			elif cmd[0] == 'shear':
-				print(cmd[0])
+				print('NOT IMPLEMENTED',cmd[0])
 			
 			# camera configs
 			elif cmd[0] == 'lookat':
@@ -126,7 +126,7 @@ def execComands(scene):
 				glutLeaveMainLoop(window)
 				glutDestroyWindow(window)
 			else:
-				print('ERROR')
+				print('ERROR',cmd[0])
 	file.close()
 
 def init():
@@ -168,7 +168,7 @@ def init():
 		glEnableVertexAttribArray(0) 
 		glEnableVertexAttribArray(1)
 	
-	print(readObj(objetos[0]))
+	#print(readObj(objetos[0]))
 	
 	# axis vao e vbo
 	vao.append(GLuint(0))
@@ -206,6 +206,21 @@ def display():
 	
 	execComands(scene)
 	scene.createView()
+
+	if axis == True:
+		glUseProgram(shaderProgram[1])
+		glBindVertexArray(vao[4])
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[4])
+		
+		id = glGetUniformLocation(shaderProgram[1], 'view')
+		glUniformMatrix4fv(id, 1, GL_FALSE, scene.view)
+		id = glGetUniformLocation(shaderProgram[1], 'projection')
+		glUniformMatrix4fv(id, 1, GL_FALSE, scene.projection)
+
+		glDrawArrays(GL_LINES, 0, 6)
+
+		axis = False
+	
 	# load everthing back
 	for obj in scene.objs:
 		glUseProgram(scene.shader)
@@ -229,6 +244,7 @@ def display():
 			wire == False
 		else:
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, obj.nVet)
+	
 	if lights == True:
 		for light in scene.lights:
 			glUseProgram(shaderProgram[2])
@@ -244,19 +260,6 @@ def display():
 			glPointSize(10)
 			glDrawArrays(GL_POINTS, 0, 1)
 	
-	if axis == True:
-		glUseProgram(shaderProgram[1])
-		glBindVertexArray(vao[4])
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[4])
-		
-		id = glGetUniformLocation(shaderProgram[1], 'view')
-		glUniformMatrix4fv(id, 1, GL_FALSE, scene.view)
-		id = glGetUniformLocation(shaderProgram[1], 'projection')
-		glUniformMatrix4fv(id, 1, GL_FALSE, scene.projection)
-
-		glDrawArrays(GL_LINES, 0, 6)
-
-		axis = False
 	
 	#clean things up
 	glBindBuffer(GL_ARRAY_BUFFER, 0)
