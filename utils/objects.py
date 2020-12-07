@@ -4,21 +4,23 @@ from pyrr import matrix44 as mat4
 
 # classe um objeto generico
 class Object3d:
+    # construtor
     def __init__(self, name, color, nVet, vao, vbo):
         self.name = name        #  nome
         self.color = color # cor
         self.model = mat4.create_identity() # matrix model
-        self.nVet = nVet
+        self.nVet = nVet # num de vertices
         self.vao = vao
         self.vbo = vbo
-
+    # translaçao
     def translate(self, position):
         translate = mat4.create_from_translation(position,dtype='f')
         self.model = mat4.multiply(self.model, translate)
+    # escala
     def scale(self, scale):
         scale = mat4.create_from_scale(scale,dtype='f')
         self.model = mat4.multiply(self.model, scale)
-
+    # rotacao
     def rotate(self, ang, vect):
         rotate = mat4.create_from_axis_rotation(vect, ang)
         self.model = mat4.multiply(self.model, rotate)
@@ -62,14 +64,3 @@ class Light:
     def __init__(self, name, position):
         self.name = name
         self.position = position
-'''
-    aux.append(Cube(txt)) 
-    aux.append(Ico(txt))
-    aux.append(Torus(txt))
-    aux.append(Cone(txt))
-
-42
-15363
-3462
-276
-'''

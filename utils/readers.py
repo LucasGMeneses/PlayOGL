@@ -11,7 +11,7 @@ def readObj(name):
     for name, material in scene.materials.items():
             return np.array(material.vertices, dtype='f')
 
-# faz a leitura dos shaders
+# faz a leitura do shader
 def readShaderFile(filename):
 	with open('shader/' + filename, 'r') as myfile:
 		return myfile.read()
